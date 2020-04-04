@@ -147,6 +147,15 @@ body {
   }
 }
 
+.nav-bar {
+
+ background-color: black;
+}
+.nav {
+
+ background-color: black;
+}
+
 .nav-container {
   display: flex;
   flex-wrap: wrap;
