@@ -8,6 +8,8 @@ import ProfilePage from "./pages/ProfilePage";
 import MarketPage from "./pages/MarketPage";
 import Navbar from "./components/Navbar";
 
+export const UserContext = React.createContext();
+
 class App extends React.Component {
   state = {
     user: null
@@ -43,7 +45,7 @@ class App extends React.Component {
   handleSignout = async () => {
     try {
       await Auth.signOut();
-      console.log('logging out')
+      console.log("logging out");
     } catch (err) {
       console.error("Error signing out user", err);
     }
@@ -54,22 +56,24 @@ class App extends React.Component {
     return !user ? (
       <Authenticator theme={theme} />
     ) : (
-      <Router>
-        <>
-          <Navbar user={user} handleSignout={this.handleSignout} />
+      <UserContext.Provider value={{ user }}>
+        <Router>
+          <>
+            <Navbar user={user} handleSignout={this.handleSignout} />
 
-          <div className="app-container">
-            <Route exact path="/" component={Homepage} />
-            <Route path="/profile" component={ProfilePage} />
-            <Route
-              path="/markets/:marketId"
-              component={({ match }) => (
-                <MarketPage marketId={match.params.marketId} />
-              )}
-            />
-          </div>
-        </>
-      </Router>
+            <div className="app-container">
+              <Route exact path="/" component={Homepage} />
+              <Route path="/profile" component={ProfilePage} />
+              <Route
+                path="/markets/:marketId"
+                component={({ match }) => (
+                  <MarketPage marketId={match.params.marketId} />
+                )}
+              />
+            </div>
+          </>
+        </Router>
+      </UserContext.Provider>
     );
   }
 }
