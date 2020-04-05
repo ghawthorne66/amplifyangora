@@ -20,9 +20,10 @@ const initialState = {
 class NewProduct extends React.Component {
   state = { ...initialState };
 
+
   handleAddProduct = async () => {
+   console.log(this.state)
    try {
-     this.setState({ isUploading: true });
      const visibility = "public";
      const { identityId } = await Auth.currentCredentials();
      const filename = `/${visibility}/${identityId}/${Date.now()}-${
@@ -31,7 +32,7 @@ class NewProduct extends React.Component {
      const uploadedFile = await Storage.put(filename, this.state.image.file, {
        contentType: this.state.image.type,
        progressCallback: progress => {
-         console.log(`Uploaded: ${progress.loaded}/${progress.total}`);
+         console.log(`Uploaded: ${progress.loaded}/${progress.total}`)
          const percentUploaded = Math.round(
            (progress.loaded / progress.total) * 100
          );
@@ -64,6 +65,7 @@ class NewProduct extends React.Component {
     console.error("Error adding product", err);
   }
 };
+
 
   render() {
     const {
@@ -129,6 +131,7 @@ class NewProduct extends React.Component {
                 type="circle"
                 className="progress"
                 percentage={percentUploaded}
+                status="success"
               />
             )}
             <PhotoPicker
