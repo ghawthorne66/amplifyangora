@@ -1,42 +1,52 @@
 import React from "react";
 import { graphqlOperation } from "aws-amplify";
+import { onCreateMarket } from "../graphql/subscriptions";
 import { Connect } from "aws-amplify-react";
 import { listMarkets } from "../graphql/queries";
-import { onCreateMarket } from "../graphql/subscriptions";
-import { Loading, Card, Icon, Tag } from "element-react";
 import Error from "./Error";
+import { Loading, Card, Icon, Tag } from "element-react";
 import { Link } from "react-router-dom";
 
-const MarketList = () => {
- const onNewMarket = (prevQuery, newData) => {
-  let updatedQuery = { ...prevQuery };
-  const updatedMarketList = [
-   newData.onCreateMarket,
-   ...prevQuery.listMarkets.items
-  ]
-  updatedQuery.listMarkets.items = updatedMarketList;
-  return updatedQuery;
- }
+const MarketList = ({ searchResults }) => {
+  const onNewMarket = (prevQuery, newData) => {
+    let updatedQuery = { ...prevQuery };
+    const updatedMarketList = [
+      newData.onCreateMarket,
+      ...prevQuery.listMarkets.items
+    ];
+    updatedQuery.listMarkets.items = updatedMarketList;
+    return updatedQuery;
+  };
   return (
-    <Connect 
-    query={graphqlOperation(listMarkets)}
-    subscription={graphqlOperation(onCreateMarket)}
-    onSubscriptionMsg={onNewMarket}>
+    <Connect
+      query={graphqlOperation(listMarkets)}
+      subscription={graphqlOperation(onCreateMarket)}
+      onSubscriptionMsg={onNewMarket}
+    >
       {({ data, loading, errors }) => {
         if (errors.length > 0) return <Error errors={errors} />;
         if (loading || !data.listMarkets) return <Loading fullScreen={true} />;
 
+        const markets =
+          searchResults.length > 0 ? searchResults : data.listMarkets.items;
+
         return (
           <>
-            <h2 className="header">
+            {searchResults.length  > 0 ? (
+             <h2 className="text-green">
+             <Icon type="success" name="check" className="icon" />
+             {searchResults.length}{' '}Results
+
+             </h2>
+            ) : (<h2 className="header">
               <img
                 src="https://icon.now.sh/store_mall_directory/527FFF"
                 alt="Store Icon"
                 className="large-icon"
               />
               Markets
-            </h2>
-            {data.listMarkets.items.map(market => (
+            </h2>)}
+            {markets.map(market => (
               <div key={market.id} className="my-2">
                 <Card
                   bodyStyle={{
@@ -54,7 +64,7 @@ const MarketList = () => {
                       <span style={{ color: "#FF9900" }}>
                         {market.products.items
                           ? market.products.items.length
-                          : "no items" }
+                          : "no items"}
                       </span>
                       <img
                         src="https://icon.now.sh/shopping_cart/f60"

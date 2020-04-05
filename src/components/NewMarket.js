@@ -19,13 +19,13 @@ class NewMarket extends React.Component {
       this.setState({ addMarketDialog: false });
       const input = {
         name: this.state.name,
-        tags: this.state.selectedTags, 
+        tags: this.state.selectedTags,
         owner: user.username
       };
       const result = await API.graphql(
         graphqlOperation(createMarket, { input })
       );
-      console.log({ result})
+      console.log({ result });
       console.info(`Created market: id ${result.data.createMarket.id}`);
       this.setState({ name: "", selectedTags: [] });
       //Verify that tags clear
@@ -38,11 +38,11 @@ class NewMarket extends React.Component {
     }
   };
   handleFilterTags = query => {
-   const options = this.state.tags
-   .map(tag => ({ value: tag, label: tag }))
-   .filter(tag => tag.label.toLowerCase().includes(query.toLowerCase()))
-   this.setState({ options })
-  }
+    const options = this.state.tags
+      .map(tag => ({ value: tag, label: tag }))
+      .filter(tag => tag.label.toLowerCase().includes(query.toLowerCase()));
+    this.setState({ options });
+  };
 
   render() {
     return (
@@ -59,7 +59,29 @@ class NewMarket extends React.Component {
                   onClick={() => this.setState({ addMarketDialog: true })}
                 />
               </h1>
+
+              <Form inline={true} onSubmit={this.props.handleSearch}>
+                <Form.Item>
+                  <Input
+                    placeholder="Search Markets..."
+                    value={this.props.searchTerm}
+                    icon="circle-cross"
+                    onIconClick={this.props.handleClearSearch}
+                    onChange={this.props.handleSearchChange}
+                  />
+                </Form.Item>
+                <Form.Item>
+                  <Button
+                   type="info"
+                    icon="search"
+                    onClick={this.props.handleSearch}
+                    loading={this.props.isSearching}
+                    
+                    ></Button>
+                </Form.Item>
+              </Form>
             </div>
+
             <Dialog
               title="Create New Market"
               visible={this.state.addMarketDialog}
@@ -84,15 +106,15 @@ class NewMarket extends React.Component {
                       placeholder="Market Tags"
                       onChange={selectedTags => this.setState({ selectedTags })}
                       remoteMethod={this.handleFilterTags}
-                      remote={true}                
+                      remote={true}
                     >
-                    {this.state.options.map(option => (
-                     <Select.Option
-                     key={option.value}
-                     label={option.value}
-                     value={option.value}
-                     />
-                    ))}
+                      {this.state.options.map(option => (
+                        <Select.Option
+                          key={option.value}
+                          label={option.value}
+                          value={option.value}
+                        />
+                      ))}
                     </Select>
                   </Form.Item>
                 </Form>
