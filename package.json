@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@aws-amplify/ui": "^2.0.2",
-    "aws-amplify": "^1.1.11",
+    "aws-amplify": "^6.15.7",
     "aws-amplify-react": "^2.1.5",
     "date-fns": "^1.29.0",
     "element-react": "^1.4.25",
